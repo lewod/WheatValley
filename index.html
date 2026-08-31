@@ -1,0 +1,1857 @@
+<html lang="zh-CN" data-trae-theme="light"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WheatValley 小麦谷服务器 | 1.8 - 26.2+ 全版本纯净生存</title>
+<style>
+/* ========== 基础变量与重置 ========== */
+:root{
+  --gold:      #f0a93b;          /* 小麦金主色 */
+  --gold-dark: #d98a1f;
+  --green:     #4a8f4f;          /* MC 草地绿 */
+  --ink:       #23272e;          /* 主文字色 */
+  --ink-soft:  #5b6470;          /* 次文字色 */
+  --bg:        #f7f8fa;          /* 内容区白底 */
+  --card:      #ffffff;
+  --line:      #e7eaf0;
+  --radius:    16px;
+  --shadow:    0 10px 30px rgba(31,41,55,.08);
+  --nav-h:     62px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  color:var(--ink);
+  background:var(--bg);
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+section{scroll-margin-top:calc(var(--nav-h) + 16px)}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+
+/* ========== 顶部导航 ========== */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 5vw;
+  transition:background .3s,box-shadow .3s;
+}
+.nav.scrolled{
+  background:rgba(255,255,255,.82);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  box-shadow:0 2px 16px rgba(0,0,0,.08);
+}
+.nav .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;color:#fff;transition:color .3s}
+.nav.scrolled .brand{color:var(--ink)}
+.nav .brand .logo{
+  width:30px;height:30px;border-radius:8px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dark));
+  display:grid;place-items:center;font-size:16px;
+}
+.nav .tabs{display:flex;gap:6px}
+.nav .tabs a{
+  padding:8px 22px;border-radius:999px;
+  font-size:15px;font-weight:600;color:rgba(255,255,255,.88);
+  transition:background .25s,color .25s;
+}
+.nav.scrolled .tabs a{color:var(--ink-soft)}
+.nav .tabs a:hover{background:rgba(255,255,255,.18);color:#fff}
+.nav.scrolled .tabs a:hover{background:rgba(240,169,59,.14);color:var(--gold-dark)}
+.nav .tabs a.active{background:var(--gold);color:#fff}
+.nav-ip{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.25);
+  padding:7px 14px;border-radius:999px;
+  font-size:13px;color:#fff;cursor:pointer;
+  transition:background .25s;
+  font-family:Consolas,monospace;
+}
+.nav-ip:hover{background:rgba(255,255,255,.28)}
+.nav.scrolled .nav-ip{background:rgba(240,169,59,.1);border-color:rgba(240,169,59,.3);color:var(--gold-dark)}
+@media(max-width:760px){.nav-ip{display:none}.nav .brand span{display:none}}
+
+/* ========== Hero 背景板（仅首屏） ========== */
+.hero{
+  position:relative;min-height:100vh;
+  display:flex;align-items:center;
+  overflow:hidden;
+  color:#fff;
+}
+/* 背景图 + 模糊 + 暗化叠加 */
+.hero-bg{
+  position:absolute;inset:-40px;
+  background:url("https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Minecraft%20voxel%20game%20landscape%2C%20vast%20golden%20wheat%20fields%20with%20cozy%20village%20houses%2C%20blocky%20terrain%2C%20farms%20rivers%20and%20hills%2C%20warm%20sunset%20golden%20hour%20lighting%2C%20cinematic%20wide%20panoramic%20wallpaper%2C%20detailed%20pixel%20art%20block%20style&image_size=landscape_16_9") center/cover no-repeat;
+  filter:blur(6px) brightness(.55);
+  transform:scale(1.08);
+}
+.hero::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(20,26,20,.35) 0%,rgba(20,26,20,.25) 50%,rgba(247,248,250,.95) 96%,var(--bg) 100%);
+}
+.hero-inner{
+  position:relative;z-index:2;
+  width:min(1180px,90vw);margin:0 auto;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:40px;
+  padding-top:var(--nav-h);
+}
+/* 左侧大标题 */
+.hero-left .badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(240,169,59,.2);border:1px solid rgba(240,169,59,.5);
+  color:#ffd98a;font-size:13px;font-weight:600;
+  padding:6px 16px;border-radius:999px;margin-bottom:22px;
+  backdrop-filter:blur(6px);
+}
+.hero-left .badge .dot{width:8px;height:8px;border-radius:50%;background:#7ee787;box-shadow:0 0 8px #7ee787;animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.hero-title{
+  font-size:clamp(30px,4.6vw,58px);
+  font-weight:900;line-height:1.25;letter-spacing:1px;
+  text-shadow:0 4px 24px rgba(0,0,0,.45);
+}
+.hero-title .hl{
+  background:linear-gradient(90deg,#ffd98a,var(--gold));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero-sub{
+  margin-top:16px;font-size:clamp(15px,1.6vw,19px);
+  color:rgba(255,255,255,.85);font-weight:500;
+}
+.hero-actions{margin-top:30px;display:flex;gap:14px;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 28px;border-radius:999px;font-size:15px;font-weight:700;
+  cursor:pointer;border:none;transition:transform .2s,box-shadow .2s;
+}
+.btn:active{transform:scale(.96)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#fff;box-shadow:0 8px 22px rgba(240,169,59,.4)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(240,169,59,.5)}
+.btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.4);backdrop-filter:blur(8px)}
+.btn-ghost:hover{background:rgba(255,255,255,.22)}
+/* 右侧小字幕信息卡 */
+.hero-right{
+  flex:0 0 auto;min-width:260px;
+  background:rgba(20,26,30,.55);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:var(--radius);
+  padding:22px 24px;
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  box-shadow:0 16px 40px rgba(0,0,0,.35);
+}
+.hero-right h4{font-size:13px;color:rgba(255,255,255,.6);font-weight:600;letter-spacing:2px;margin-bottom:14px}
+.hero-right .row{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px}
+.hero-right .row:last-child{margin-bottom:0}
+.hero-right .row .ic{width:30px;height:30px;border-radius:8px;background:rgba(240,169,59,.22);display:grid;place-items:center;font-size:15px;flex:none}
+.hero-right .row b{font-weight:700}
+.hero-right .row .mono{font-family:Consolas,monospace;color:#ffd98a}
+.scroll-hint{
+  position:absolute;bottom:26px;left:50%;transform:translateX(-50%);
+  z-index:2;color:rgba(255,255,255,.75);font-size:12px;letter-spacing:3px;
+  text-align:center;animation:bob 2s infinite;
+}
+@keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,8px)}}
+@media(max-width:860px){
+  .hero-inner{flex-direction:column;align-items:flex-start;gap:28px;padding-bottom:70px}
+}
+
+/* ========== 白色内容区通用 ========== */
+main{background:var(--bg);position:relative;z-index:3}
+.wrap{width:min(1180px,90vw);margin:0 auto;padding:72px 0}
+/* # 主标题：大号 */
+.h1{
+  font-size:clamp(26px,3.2vw,38px);font-weight:900;
+  display:flex;align-items:center;gap:16px;margin-bottom:10px;
+}
+.h1::before{
+  content:"";width:8px;height:36px;border-radius:4px;
+  background:linear-gradient(180deg,var(--gold),var(--gold-dark));flex:none;
+}
+/* ## 次标题：明显小很多 */
+.h2{
+  font-size:clamp(18px,2vw,23px);font-weight:800;
+  margin:44px 0 18px;display:flex;align-items:center;gap:10px;color:var(--ink);
+}
+.h2::before{content:"▸";color:var(--gold);font-size:18px}
+.h-desc{color:var(--ink-soft);font-size:15px;margin-bottom:28px;max-width:720px}
+.card{
+  background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radius);box-shadow:var(--shadow);
+}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* ========== 服务器状态卡片 ========== */
+.status-card{padding:28px;overflow:hidden}
+.status-head{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.srv-icon{
+  width:84px;height:84px;border-radius:14px;flex:none;
+  background:linear-gradient(135deg,#7ab35a,#4a8f4f);
+  border:3px solid #fff;box-shadow:0 6px 18px rgba(74,143,79,.35);
+  image-rendering:pixelated;
+}
+.srv-main{flex:1;min-width:220px}
+.srv-ip{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:Consolas,monospace;font-size:20px;font-weight:700;cursor:pointer;
+}
+.srv-ip .copy{
+  font-size:12px;font-family:inherit;font-weight:600;
+  background:var(--gold);color:#fff;padding:3px 10px;border-radius:999px;
+  transition:background .2s;
+}
+.srv-ip:hover .copy{background:var(--gold-dark)}
+.srv-motd{color:var(--ink-soft);font-size:14px;margin-top:6px;min-height:22px}
+.srv-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tag{
+  font-size:12.5px;font-weight:600;padding:4px 12px;border-radius:999px;
+  background:#f1f4f8;color:var(--ink-soft);
+}
+.tag.online{background:rgba(74,143,79,.12);color:var(--green)}
+.tag.offline{background:rgba(220,70,70,.12);color:#dc4646}
+.tag .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:currentColor;margin-right:5px;vertical-align:1px}
+.tag.online .dot{animation:pulse 1.6s infinite}
+/* 人数区 */
+.srv-players{flex:0 0 auto;min-width:200px;text-align:right}
+.srv-players .num{font-size:38px;font-weight:900;line-height:1.1;color:var(--green)}
+.srv-players .num.off{color:#dc4646}
+.srv-players .num small{font-size:17px;color:var(--ink-soft);font-weight:700}
+.srv-players .lbl{font-size:13px;color:var(--ink-soft)}
+.pbar{height:8px;border-radius:99px;background:#eef1f5;margin-top:10px;overflow:hidden}
+.pbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#7ab35a,var(--green));transition:width .8s ease}
+.srv-meta{
+  display:flex;gap:26px;flex-wrap:wrap;
+  margin-top:22px;padding-top:18px;border-top:1px dashed var(--line);
+  font-size:13.5px;color:var(--ink-soft);
+}
+.srv-meta b{color:var(--ink);font-weight:700}
+.srv-meta .refresh{margin-left:auto;font-size:12.5px;color:#9aa3af}
+/* 在线玩家头像列表 */
+.player-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.player-chip{
+  display:flex;align-items:center;gap:8px;
+  background:#f5f7fa;border:1px solid var(--line);
+  padding:5px 12px 5px 5px;border-radius:999px;font-size:13px;font-weight:600;
+}
+.player-chip img{width:26px;height:26px;border-radius:6px;image-rendering:pixelated}
+.no-players{font-size:13.5px;color:#9aa3af;padding:14px 0 2px}
+
+/* ========== 介绍区 ========== */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:22px 0 8px}
+.feat{
+  padding:22px;border-radius:var(--radius);
+  background:var(--card);border:1px solid var(--line);
+  transition:transform .25s,box-shadow .25s;
+}
+.feat:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.feat .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;margin-bottom:12px;background:rgba(240,169,59,.14)}
+.feat h5{font-size:16px;font-weight:800;margin-bottom:6px}
+.feat p{font-size:13.5px;color:var(--ink-soft);line-height:1.7}
+.prose{font-size:15px;color:#3d4550}
+.prose p{margin-bottom:14px}
+.prose .note{
+  background:#fff8ec;border-left:4px solid var(--gold);
+  border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0;
+  font-size:14px;color:#7a5a20;
+}
+.prose .warn{
+  background:#fdeeee;border-left:4px solid #e06060;
+  border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0;
+  font-size:14px;color:#8a3030;
+}
+/* 配置卡片 */
+.spec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-top:20px}
+.spec{
+  background:linear-gradient(160deg,#fff,#faf6ee);
+  border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px;text-align:center;
+}
+.spec .ic{font-size:26px}
+.spec .v{font-size:24px;font-weight:900;color:var(--gold-dark);margin:6px 0 2px}
+.spec .k{font-size:13px;color:var(--ink-soft)}
+.spec.upgrade{position:relative;overflow:hidden}
+.spec.upgrade::after{
+  content:"升级中";position:absolute;top:12px;right:-30px;
+  background:var(--green);color:#fff;font-size:11px;font-weight:700;
+  padding:3px 36px;transform:rotate(45deg);
+}
+
+/* ========== 官方群 ========== */
+.qq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-top:26px}
+.qq-card{
+  display:flex;align-items:center;gap:18px;padding:26px;
+  border-radius:var(--radius);background:var(--card);
+  border:1px solid var(--line);box-shadow:var(--shadow);
+  transition:transform .25s;
+}
+.qq-card:hover{transform:translateY(-4px)}
+.qq-card .ic{
+  width:58px;height:58px;border-radius:16px;flex:none;
+  display:grid;place-items:center;font-size:28px;color:#fff;
+  background:linear-gradient(135deg,#4a90d9,#2f6fb0);
+}
+.qq-card .ic.master{background:linear-gradient(135deg,var(--gold),var(--gold-dark))}
+.qq-card h5{font-size:17px;font-weight:800}
+.qq-card p{font-size:13px;color:var(--ink-soft);margin:2px 0 8px}
+.qq-num{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:Consolas,monospace;font-size:17px;font-weight:700;color:var(--ink);
+  cursor:pointer;
+}
+.qq-num .copy{font-size:11px;font-family:inherit;background:#eef1f5;color:var(--ink-soft);padding:2px 9px;border-radius:99px;font-weight:600}
+.qq-num:hover .copy{background:var(--gold);color:#fff}
+
+/* ========== 帮助：命令表 ========== */
+.cmd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;margin-top:20px}
+.cmd-row{
+  display:flex;align-items:center;gap:12px;
+  background:var(--card);border:1px solid var(--line);
+  border-radius:12px;padding:11px 16px;font-size:14px;
+}
+.cmd-row code{
+  font-family:Consolas,monospace;font-weight:700;font-size:13.5px;
+  color:var(--gold-dark);background:rgba(240,169,59,.12);
+  padding:3px 10px;border-radius:7px;white-space:nowrap;flex:none;
+}
+.cmd-row span{color:var(--ink-soft);font-size:13.5px}
+/* VIP 价格 */
+.vip-price{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:20px}
+.price-card{
+  border:1px solid var(--line);border-radius:var(--radius);
+  background:var(--card);padding:24px;position:relative;
+  transition:transform .25s,box-shadow .25s;
+}
+.price-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.price-card.hot{border:2px solid var(--gold);background:linear-gradient(165deg,#fffdf7,#fff)}
+.price-card .tier{font-size:17px;font-weight:900;letter-spacing:1px}
+.price-card.lite .tier{color:#5b8c5a}
+.price-card.vip .tier{color:#3f8fd9}
+.price-card.svip .tier{color:#8a5fd0}
+.price-card.msvip .tier{color:var(--gold-dark)}
+.price-card .price{font-size:30px;font-weight:900;margin:8px 0 2px}
+.price-card .price small{font-size:14px;color:var(--ink-soft);font-weight:600}
+.price-card .extra{font-size:13px;color:var(--ink-soft)}
+.price-card .flag{
+  position:absolute;top:-11px;right:16px;
+  background:var(--gold);color:#fff;font-size:12px;font-weight:700;
+  padding:3px 12px;border-radius:99px;
+}
+/* VIP 权益对比 */
+.perk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:20px}
+.perk-card{
+  border:1px solid var(--line);border-radius:var(--radius);
+  background:var(--card);padding:22px;display:flex;flex-direction:column;
+}
+.perk-card .head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.perk-card .head .medal{
+  width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
+  font-size:19px;flex:none;color:#fff;
+}
+.perk-card.free .medal{background:#9aa3af}
+.perk-card.lite .medal{background:linear-gradient(135deg,#7ab35a,#4a8f4f)}
+.perk-card.vip .medal{background:linear-gradient(135deg,#5aa8e8,#2f6fb0)}
+.perk-card.svip .medal{background:linear-gradient(135deg,#a97fe0,#7048b8)}
+.perk-card.msvip .medal{background:linear-gradient(135deg,#ffcf6b,var(--gold-dark))}
+.perk-card .head b{font-size:16px;font-weight:900}
+.perk-card .head .sub{font-size:12px;color:var(--ink-soft)}
+.perk-card ul{list-style:none;font-size:13.5px;color:var(--ink-soft)}
+.perk-card li{padding:6px 0 6px 24px;position:relative;border-bottom:1px dashed #f0f2f6}
+.perk-card li:last-child{border-bottom:none}
+.perk-card li::before{content:"✓";position:absolute;left:2px;color:var(--green);font-weight:800}
+.perk-card.free li::before{content:"—";color:#c2c8d2}
+.perk-card.msvip{box-shadow:0 14px 34px rgba(240,169,59,.22)}
+
+/* ========== 页脚 ========== */
+footer{
+  background:#1d2128;color:rgba(255,255,255,.65);
+  padding:44px 5vw 34px;text-align:center;font-size:13.5px;
+}
+footer .f-brand{font-size:18px;font-weight:900;color:#fff;margin-bottom:8px}
+footer .f-brand .hl{color:var(--gold)}
+footer .f-ip{font-family:Consolas,monospace;color:#ffd98a;cursor:pointer}
+footer p{margin:4px 0}
+
+/* 复制成功提示 */
+.toast{
+  position:fixed;bottom:30px;left:50%;transform:translate(-50%,20px);
+  background:rgba(30,34,40,.92);color:#fff;font-size:14px;font-weight:600;
+  padding:11px 26px;border-radius:999px;z-index:200;
+  opacity:0;pointer-events:none;transition:all .3s;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+<style data-trae-edit-ui="true" id="trae-previewer-tools-styles">:root {
+  --trae-layer-image-download: 89990;
+  --trae-layer-browser-inspect-overlay: 90000;
+  --trae-layer-browser-inspect-highlight: 90010;
+  --trae-layer-browser-inspect-action: 90020;
+  --trae-layer-text-selection-action: 90030;
+  --trae-layer-edit-tooltip: 100095;
+}
+:root,
+[data-trae-theme='dark'] {
+  --trae-bg-base-default: #171717;
+  --trae-bg-menu: #222427;
+  --trae-bg-overlay-l1: rgba(255, 255, 255, 0.04);
+  --trae-bg-overlay-l2: rgba(255, 255, 255, 0.08);
+  --trae-bg-overlay-l3: rgba(255, 255, 255, 0.12);
+  --trae-bg-overlay-l4: rgba(255, 255, 255, 0.16);
+  --trae-bg-invert: #f5f9fe;
+  --trae-bg-invert-hover: #e8ecf0;
+  --trae-bg-invert-active: #dce0e4;
+  --trae-bg-invert-disabled: rgba(224, 226, 242, 0.12);
+  --bg-bg-brand-disabled: rgba(75, 63, 227, 0.35);
+  --bg-bg-brand-popup: rgba(106, 111, 255, 0.15);
+  --trae-border-l1: #e0e2f217;
+  --trae-border-l2: rgba(255, 255, 255, 0.12);
+  --trae-border-l3: rgba(255, 255, 255, 0.08);
+  --trae-border-neutral-l3: rgba(229, 229, 229, 0.20);
+  --trae-border-brand: #6a6fff;
+  --trae-text-default: #f5f9fe;
+  --trae-text-default-hover: #f5f9fe;
+  --trae-text-default-active: #f5f9fe;
+  --trae-text-secondary: rgba(245, 249, 254, 0.5);
+  --trae-text-tertiary: rgba(245, 249, 254, 0.4);
+  --trae-text-disabled: #666b75;
+  --trae-text-onaccent: #222427;
+  --trae-icon-default: #f5f9fe;
+  --trae-icon-secondary: rgba(245, 249, 254, 0.5);
+  --trae-icon-brand: #6a6fff;
+  --icon-icon-brand: var(--trae-icon-brand);
+  --trae-icon-onaccent: #222427;
+  --trae-status-success: #22c55e;
+  --trae-status-primary: #3b82f6;
+  --trae-status-primary-default: #387bff;
+  --trae-status-primary-surface-l1: rgba(53, 121, 255, 0.18);
+  --trae-status-success-default: #33c192;
+  --trae-status-success-surface-l1: rgba(0, 165, 110, 0.18);
+  --trae-status-error-default: #f65a5a;
+  --trae-status-error-surface-l1: rgba(246, 70, 70, 0.18);
+  --trae-annotation-marker-bg: #4b3fe3;
+  --trae-annotation-marker-text: #ffffff;
+  --trae-annotation-region-border: var(--trae-status-primary-default);
+  --trae-region-outside-mask-bg: rgba(0, 0, 0, 0.32);
+  --trae-panel-shadow: 0px 6px 24px -1px rgba(0, 0, 0, 0.16);
+  --trae-floating-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.2);
+  --trae-shadow-elevation-50: 0 1px 2px -1px rgba(0, 0, 0, 0.45);
+  --text-text-default: var(--trae-text-default);
+  --text-text-onaccent: var(--trae-text-onaccent);
+  --bg-bg-menu: var(--trae-bg-menu);
+  --bg-bg-white: var(--trae-bg-menu);
+  --bg-bg-invert: var(--trae-bg-invert);
+  --bg-bg-invert-disabled: var(--trae-bg-invert-disabled);
+  --bg-bg-overlay-l1: var(--trae-bg-overlay-l1);
+  --bg-bg-overlay-l2: var(--trae-bg-overlay-l2);
+  --bg-bg-overlay-l3: var(--trae-bg-overlay-l3);
+  --border-border-neutral-l1: var(--trae-border-l1);
+  --border-border-brand: var(--trae-border-brand);
+  --border-border-brand-half: rgba(106, 111, 255, 0.4);
+  --status-error-default: var(--trae-status-error-default);
+  --status-error-surface-l1: var(--trae-status-error-surface-l1);
+  --radius-radius-md-12: 12px;
+  --spacers-spacer-0: 0;
+  --spacers-spacer-6: 6px;
+}
+
+[data-trae-theme='light'] {
+  --trae-bg-base-default: #fafafa;
+  --trae-bg-menu: #ffffff;
+  --trae-bg-overlay-l1: rgba(0, 0, 0, 0.04);
+  --trae-bg-overlay-l2: rgba(0, 0, 0, 0.06);
+  --trae-bg-overlay-l3: rgba(0, 0, 0, 0.08);
+  --trae-bg-overlay-l4: rgba(0, 0, 0, 0.12);
+  --trae-bg-invert: #1f2328;
+  --trae-bg-invert-hover: #32383f;
+  --trae-bg-invert-active: #444d56;
+  --trae-bg-invert-disabled: rgba(115, 115, 115, 0.20);
+  --bg-bg-brand-disabled: rgba(75, 63, 227, 0.22);
+  --bg-bg-brand-popup: rgba(170, 183, 255, 0.36);
+  --trae-border-l1: rgba(0, 0, 0, 0.1);
+  --trae-border-l2: rgba(0, 0, 0, 0.12);
+  --trae-border-l3: rgba(0, 0, 0, 0.08);
+  --trae-border-neutral-l3: rgba(115, 115, 115, 0.36);
+  --trae-border-brand: #4b3fe3;
+  --trae-text-default: #1f2328;
+  --trae-text-default-hover: #111214;
+  --trae-text-default-active: #111214;
+  --trae-text-secondary: rgba(31, 35, 40, 0.5);
+  --trae-text-tertiary: rgba(31, 35, 40, 0.4);
+  --trae-text-disabled: #a1a1a1;
+  --trae-text-onaccent: #ffffff;
+  --trae-icon-default: #1f2328;
+  --trae-icon-secondary: rgba(31, 35, 40, 0.5);
+  --trae-icon-brand: #4b3fe3;
+  --icon-icon-brand: var(--trae-icon-brand);
+  --trae-icon-onaccent: #ffffff;
+  --trae-status-success: #22c55e;
+  --trae-status-primary: #3b82f6;
+  --trae-status-primary-default: #2f74ff;
+  --trae-status-primary-surface-l1: rgba(47, 116, 255, 0.12);
+  --trae-status-success-default: #15a877;
+  --trae-status-success-surface-l1: rgba(64, 176, 139, 0.12);
+  --trae-status-error-default: #e8463a;
+  --trae-status-error-surface-l1: rgba(232, 70, 58, 0.12);
+  --trae-annotation-marker-bg: #4b3fe3;
+  --trae-annotation-marker-text: #ffffff;
+  --trae-annotation-region-border: var(--trae-status-primary-default);
+  --trae-region-outside-mask-bg: rgba(0, 0, 0, 0.18);
+  --trae-panel-shadow: 0px 6px 24px -1px rgba(24, 24, 24, 0.06);
+  --trae-floating-shadow: 0px 2px 8px 0px rgba(24, 24, 24, 0.2);
+  --trae-shadow-elevation-50: 0 1px 2px -1px rgba(24, 24, 24, 0.08);
+  --text-text-default: var(--trae-text-default);
+  --text-text-onaccent: var(--trae-text-onaccent);
+  --bg-bg-menu: var(--trae-bg-menu);
+  --bg-bg-white: var(--trae-bg-menu);
+  --bg-bg-invert: var(--trae-bg-invert);
+  --bg-bg-invert-disabled: var(--trae-bg-invert-disabled);
+  --bg-bg-overlay-l1: var(--trae-bg-overlay-l1);
+  --bg-bg-overlay-l2: var(--trae-bg-overlay-l2);
+  --bg-bg-overlay-l3: var(--trae-bg-overlay-l3);
+  --border-border-neutral-l1: var(--trae-border-l1);
+  --border-border-brand: var(--trae-border-brand);
+  --border-border-brand-half: rgba(75, 63, 227, 0.4);
+  --status-error-default: var(--trae-status-error-default);
+  --status-error-surface-l1: var(--trae-status-error-surface-l1);
+  --radius-radius-md-12: 12px;
+  --spacers-spacer-0: 0;
+  --spacers-spacer-6: 6px;
+}
+
+@keyframes trae-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes trae-edit-bar-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes trae-edit-bar-leave {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+@keyframes trae-edit-panel-leave {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+.trae-edit-mode-active:not(.trae-edit-mode-dragging) body *:not([data-trae-edit-ui]):not([data-trae-edit-ui] *) {
+  transition: none !important;
+  animation-play-state: paused !important;
+}
+
+.trae-edit-mode-reorder-hit-test [data-trae-edit-ui]:not(.trae-edit-pointer-shield):not(.trae-edit-panel),
+.trae-edit-mode-reorder-hit-test [data-trae-edit-ui]:not(.trae-edit-pointer-shield):not(.trae-edit-panel) * {
+  pointer-events: none !important;
+}
+
+.trae-browser-inspect-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--trae-layer-browser-inspect-overlay);
+  pointer-events: auto;
+  background: transparent;
+}
+
+.trae-browser-inspect-highlight-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: var(--trae-layer-browser-inspect-highlight);
+  display: none;
+}
+
+.trae-browser-inspect-highlight-tag {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  height: 18px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  background-color: var(--trae-status-success-default);
+  color: var(--trae-text-onaccent);
+  font-size: 12px;
+  font-weight: 400;
+  display: none;
+  align-items: center;
+  z-index: var(--trae-layer-browser-inspect-action);
+}
+
+.trae-browser-inspect-highlight-box-show {
+  display: flex;
+}
+
+.trae-browser-inspect-highlight-tag.trae-browser-inspect-highlight-box-show {
+  display: none;
+}
+
+.trae-browser-inspect-select-button.trae-browser-inspect-highlight-box-show {
+  display: block !important;
+}
+
+.trae-browser-inspect-select-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  z-index: var(--trae-layer-browser-inspect-action);
+}
+
+.trae-browser-inspect-select-highlight-box {
+  background: transparent !important;
+}
+
+.trae-browser-inspect-select-highlight-box .trae-browser-inspect-highlight-tag {
+  background-color: var(--trae-status-success-default);
+}
+
+.trae-add-to-chat-card {
+  display: block;
+  overflow: hidden;
+  background: var(--trae-bg-menu);
+  border: 1px solid var(--trae-border-l1);
+  border-radius: 8px;
+  box-shadow: var(--trae-floating-shadow);
+  transition:
+    width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.trae-add-to-chat-content {
+  position: relative;
+  width: max-content;
+}
+
+.trae-fade-exit {
+  opacity: 0;
+  transition: opacity 0.15s ease-out;
+}
+
+.trae-fade-enter {
+  opacity: 1;
+  transition: opacity 0.2s ease-in;
+}
+
+.trae-buttons-view {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  background: transparent;
+}
+
+.trae-action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.trae-action-button:hover {
+  background: var(--trae-bg-overlay-l2);
+}
+
+.trae-action-button:active {
+  background: var(--trae-bg-overlay-l3);
+}
+
+.trae-action-button:focus-visible {
+  outline: 2px solid var(--trae-status-primary);
+  outline-offset: 1px;
+}
+
+.trae-action-button-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--trae-icon-default);
+  flex-shrink: 0;
+}
+
+.trae-action-button-title {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--trae-text-default);
+  white-space: nowrap;
+}
+
+.trae-edit-toolbar-button-active {
+  background: var(--bg-bg-brand-disabled, rgba(75, 63, 227, 0.22)) !important;
+  color: var(--icon-icon-brand, #4b3fe3) !important;
+  font-weight: bold !important;
+}
+
+.trae-edit-toolbar-button-active:hover {
+  background: var(--bg-bg-brand-popup, rgba(170, 183, 255, 0.36)) !important;
+}
+
+.trae-edit-toolbar button[data-action='alignment-dropdown']:hover,
+.trae-edit-toolbar button[data-action='text-align-dropdown']:hover,
+.trae-edit-toolbar button[data-action='font-decrease']:hover,
+.trae-edit-toolbar button[data-action='font-increase']:hover,
+.trae-edit-toolbar button[data-action^='align-']:hover {
+  border-radius: 8px;
+  background: var(--bg-bg-overlay-l1, rgba(115, 115, 115, 0.08)) !important;
+}
+
+.trae-edit-toolbar button[data-action='alignment-dropdown']:active,
+.trae-edit-toolbar button[data-action='text-align-dropdown']:active,
+.trae-edit-toolbar button[data-action='font-decrease']:active,
+.trae-edit-toolbar button[data-action='font-increase']:active,
+.trae-edit-toolbar button[data-action^='align-']:active {
+  border-radius: 8px;
+  background: var(--bg-bg-overlay-l2, rgba(115, 115, 115, 0.12)) !important;
+}
+
+.trae-comment-input {
+  background: transparent;
+  color: var(--trae-text-default);
+  caret-color: var(--trae-text-default);
+}
+
+.trae-comment-input::placeholder {
+  color: var(--trae-text-tertiary);
+}
+
+.trae-point-edit-bar,
+.trae-point-comment-input-bar,
+.trae-comment-only-panel {
+  transform-origin: top center;
+  will-change: opacity, transform;
+}
+
+.trae-edit-panel:not(.trae-edit-panel-leave) {
+  pointer-events: auto !important;
+}
+
+.trae-edit-bar-enter {
+  animation: trae-edit-bar-enter var(--transition-normal, 0.18s cubic-bezier(0.2, 0, 0, 1)) both;
+}
+
+.trae-edit-bar-leave {
+  pointer-events: none;
+  animation: trae-edit-bar-leave var(--transition-fast, 0.14s ease) both;
+}
+
+.trae-edit-panel-leave {
+  pointer-events: none;
+  animation: trae-edit-panel-leave var(--transition-fast, 0.14s ease) both;
+}
+
+.trae-edit-panel [data-trae-tooltip] {
+  position: relative;
+}
+
+.trae-edit-panel [data-trae-tooltip]::after {
+  content: attr(data-trae-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  z-index: var(--trae-layer-edit-tooltip);
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--trae-bg-invert, var(--bg-bg-invert));
+  color: var(--trae-text-onaccent, var(--text-text-onaccent));
+  box-shadow: var(--trae-floating-shadow);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.039px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-sizing: border-box;
+  opacity: 0;
+  transform: translateX(-50%);
+  visibility: hidden;
+}
+
+.trae-edit-panel [data-trae-tooltip]::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 5px);
+  z-index: var(--trae-layer-edit-tooltip);
+  width: 8px;
+  height: 4px;
+  background: var(--trae-bg-invert, var(--bg-bg-invert));
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform: translateX(-50%);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.trae-edit-panel [data-trae-tooltip]:hover::after,
+.trae-edit-panel [data-trae-tooltip]:focus-visible::after,
+.trae-edit-panel [data-trae-tooltip]:hover::before,
+.trae-edit-panel [data-trae-tooltip]:focus-visible::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+.trae-comment-btn {
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.trae-comment-btn:disabled {
+  cursor: not-allowed;
+}
+
+.trae-comment-btn:focus-visible {
+  outline: 2px solid var(--trae-status-primary);
+  outline-offset: 1px;
+}
+
+.trae-comment-btn-primary {
+  background: var(--trae-bg-invert);
+  color: var(--trae-text-onaccent);
+}
+
+.trae-comment-btn-primary:hover:not(:disabled) {
+  background: var(--trae-bg-invert-hover);
+}
+
+.trae-comment-btn-primary:active:not(:disabled) {
+  background: var(--trae-bg-invert-active);
+}
+
+.trae-comment-btn-primary:disabled {
+  background: var(--trae-bg-invert-disabled);
+  color: var(--trae-text-disabled);
+}
+
+.trae-comment-btn-secondary {
+  background: var(--trae-bg-overlay-l2);
+  color: var(--trae-text-default);
+}
+
+.trae-comment-btn-secondary:hover:not(:disabled) {
+  background: var(--trae-bg-overlay-l3);
+}
+
+.trae-comment-btn-secondary:active:not(:disabled) {
+  background: var(--trae-bg-overlay-l4);
+}
+
+.trae-comment-btn-secondary:disabled {
+  background: var(--trae-bg-overlay-l2);
+  color: var(--trae-text-disabled);
+}
+
+.trae-comment-btn-text {
+  background: transparent;
+  color: var(--trae-text-default);
+}
+
+.trae-comment-btn-text:hover:not(:disabled) {
+  border-radius: 8px;
+  background: var(--bg-bg-overlay-l1, var(--trae-bg-overlay-l1));
+  color: var(--trae-text-default-hover);
+}
+
+.trae-comment-btn-text:active:not(:disabled) {
+  border-radius: 8px;
+  background: var(--trae-bg-overlay-l2);
+  color: var(--trae-text-default-active);
+}
+
+.trae-comment-btn-text:disabled {
+  background: transparent;
+  color: var(--trae-text-disabled);
+}
+
+.trae-marking-btn {
+  justify-content: center;
+}
+
+.trae-marking-btn:hover:not(:disabled) {
+  background: var(--trae-bg-overlay-l1) !important;
+}
+
+.trae-marking-btn-active {
+  background: var(--bg-bg-brand-disabled, rgba(75, 63, 227, 0.22)) !important;
+  color: var(--icon-icon-brand, var(--trae-icon-brand)) !important;
+}
+
+.trae-marking-btn-active:hover {
+  background: var(--bg-bg-brand-popup, rgba(170, 183, 255, 0.36)) !important;
+  color: var(--icon-icon-brand, var(--trae-icon-brand)) !important;
+}
+
+.trae-marking-btn:active:not(:disabled) {
+  background: var(--trae-bg-overlay-l2) !important;
+}
+
+.trae-marking-btn:disabled {
+  color: var(--trae-text-disabled) !important;
+  cursor: not-allowed !important;
+}
+
+.trae-action-button-shortcut {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--trae-icon-secondary);
+  flex-shrink: 0;
+}
+
+.trae-shortcut-container {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.trae-shortcut-key {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 12px;
+  color: var(--trae-icon-secondary);
+}
+
+.trae-add-to-chat-divider {
+  width: 2px;
+  height: 12px;
+  padding: 0 6px;
+  box-sizing: content-box;
+  background-clip: content-box;
+  background-color: var(--trae-border-l2);
+  flex-shrink: 0;
+}
+
+.trae-editor-view {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  padding: 8px;
+  background: transparent;
+}
+
+.trae-editor-text-container {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background: var(--trae-bg-overlay-l1);
+  border: 1px solid var(--trae-border-l3);
+  border-radius: 4px;
+  gap: 8px;
+}
+
+.trae-editor-textarea {
+  flex: 1;
+  padding: 0 2px;
+  border: none;
+  background: transparent;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--trae-text-default);
+  resize: none;
+  outline: none;
+  overflow-y: auto;
+  max-height: 140px;
+}
+
+.trae-editor-textarea::placeholder {
+  color: var(--trae-text-tertiary);
+}
+
+.trae-editor-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.2s ease-out,
+    opacity 0.2s ease-out,
+    margin-top 0.2s ease-out;
+}
+
+.trae-editor-action-bar-visible {
+  max-height: 32px;
+  opacity: 1;
+  margin-top: 8px;
+}
+
+.trae-editor-cancel-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  padding: 0 4px;
+  background: var(--trae-bg-overlay-l2);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.trae-editor-cancel-button:hover {
+  background: var(--trae-bg-overlay-l3);
+}
+
+.trae-editor-cancel-button:active {
+  background: var(--trae-bg-overlay-l3);
+}
+
+.trae-editor-cancel-button:focus-visible {
+  outline: 2px solid var(--trae-status-primary);
+  outline-offset: 1px;
+}
+
+.trae-editor-cancel-text {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--trae-text-default);
+  white-space: nowrap;
+  padding: 0 4px;
+}
+
+.trae-editor-submit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  padding: 0 8px;
+  background: var(--trae-bg-invert);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.trae-editor-submit-button:hover {
+  background: var(--trae-bg-invert-hover);
+}
+
+.trae-editor-submit-button:active {
+  background: var(--trae-bg-invert-active);
+}
+
+.trae-editor-submit-button:focus-visible {
+  outline: 2px solid var(--trae-status-primary);
+  outline-offset: 1px;
+}
+
+.trae-editor-submit-text {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--trae-text-onaccent);
+  white-space: nowrap;
+  padding: 0 4px;
+}
+
+.trae-editor-submit-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  color: var(--trae-icon-onaccent);
+  flex-shrink: 0;
+}
+
+.trae-success-view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 12px;
+  height: 32px;
+  white-space: nowrap;
+}
+
+.trae-success-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--trae-status-success);
+  flex-shrink: 0;
+}
+
+.trae-success-text {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  color: var(--trae-text-default);
+  user-select: none;
+}
+</style><style data-trae-pptx-captured-css="true">:root { --gold: #f0a93b; --gold-dark: #d98a1f; --green: #4a8f4f; --ink: #23272e; --ink-soft: #5b6470; --bg: #f7f8fa; --card: #ffffff; --line: #e7eaf0; --radius: 16px; --shadow: 0 10px 30px rgba(31,41,55,.08); --nav-h: 62px; }
+* { margin: 0px; padding: 0px; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; color: var(--ink); background: var(--bg); line-height: 1.75; -webkit-font-smoothing: antialiased; }
+section { scroll-margin-top: calc(var(--nav-h) + 16px); }
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+.nav { position: fixed; top: 0px; left: 0px; right: 0px; z-index: 100; height: var(--nav-h); display: flex; align-items: center; justify-content: space-between; padding: 0px 5vw; transition: background 0.3s, box-shadow 0.3s; }
+.nav.scrolled { background: rgba(255, 255, 255, 0.82); backdrop-filter: blur(14px); box-shadow: rgba(0, 0, 0, 0.08) 0px 2px 16px; }
+.nav .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; color: rgb(255, 255, 255); transition: color 0.3s; }
+.nav.scrolled .brand { color: var(--ink); }
+.nav .brand .logo { width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(135deg,var(--gold),var(--gold-dark)); display: grid; place-items: center; font-size: 16px; }
+.nav .tabs { display: flex; gap: 6px; }
+.nav .tabs a { padding: 8px 22px; border-radius: 999px; font-size: 15px; font-weight: 600; color: rgba(255, 255, 255, 0.88); transition: background 0.25s, color 0.25s; }
+.nav.scrolled .tabs a { color: var(--ink-soft); }
+.nav .tabs a:hover { background: rgba(255, 255, 255, 0.18); color: rgb(255, 255, 255); }
+.nav.scrolled .tabs a:hover { background: rgba(240, 169, 59, 0.14); color: var(--gold-dark); }
+.nav .tabs a.active { background: var(--gold); color: rgb(255, 255, 255); }
+.nav-ip { display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.25); padding: 7px 14px; border-radius: 999px; font-size: 13px; color: rgb(255, 255, 255); cursor: pointer; transition: background 0.25s; font-family: Consolas, monospace; }
+.nav-ip:hover { background: rgba(255, 255, 255, 0.28); }
+.nav.scrolled .nav-ip { background: rgba(240, 169, 59, 0.1); border-color: rgba(240, 169, 59, 0.3); color: var(--gold-dark); }
+@media (max-width: 760px) {
+  .nav-ip { display: none; }
+  .nav .brand span { display: none; }
+}
+.hero { position: relative; min-height: 100vh; display: flex; align-items: center; overflow: hidden; color: rgb(255, 255, 255); }
+.hero-bg { position: absolute; inset: -40px; background: url("https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Minecraft%20voxel%20game%20landscape%2C%20vast%20golden%20wheat%20fields%20with%20cozy%20village%20houses%2C%20blocky%20terrain%2C%20farms%20rivers%20and%20hills%2C%20warm%20sunset%20golden%20hour%20lighting%2C%20cinematic%20wide%20panoramic%20wallpaper%2C%20detailed%20pixel%20art%20block%20style&image_size=landscape_16_9") center center / cover no-repeat; filter: blur(6px) brightness(0.55); transform: scale(1.08); }
+.hero::after { content: ""; position: absolute; inset: 0px; background: linear-gradient(180deg,rgba(20,26,20,.35) 0%,rgba(20,26,20,.25) 50%,rgba(247,248,250,.95) 96%,var(--bg) 100%); }
+.hero-inner { position: relative; z-index: 2; width: min(1180px, 90vw); margin: 0px auto; display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; padding-top: var(--nav-h); }
+.hero-left .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(240, 169, 59, 0.2); border: 1px solid rgba(240, 169, 59, 0.5); color: rgb(255, 217, 138); font-size: 13px; font-weight: 600; padding: 6px 16px; border-radius: 999px; margin-bottom: 22px; backdrop-filter: blur(6px); }
+.hero-left .badge .dot { width: 8px; height: 8px; border-radius: 50%; background: rgb(126, 231, 135); box-shadow: rgb(126, 231, 135) 0px 0px 8px; animation: 1.6s ease 0s infinite normal none running pulse; }
+@keyframes pulse { 
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.hero-title { font-size: clamp(30px, 4.6vw, 58px); font-weight: 900; line-height: 1.25; letter-spacing: 1px; text-shadow: rgba(0, 0, 0, 0.45) 0px 4px 24px; }
+.hero-title .hl { background-image: ; background-position-x: ; background-position-y: ; background-size: ; background-repeat: ; background-attachment: ; background-origin: ; background-color: ; background-clip: text; color: transparent; }
+.hero-sub { margin-top: 16px; font-size: clamp(15px, 1.6vw, 19px); color: rgba(255, 255, 255, 0.85); font-weight: 500; }
+.hero-actions { margin-top: 30px; display: flex; gap: 14px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 28px; border-radius: 999px; font-size: 15px; font-weight: 700; cursor: pointer; border: none; transition: transform 0.2s, box-shadow 0.2s; }
+.btn:active { transform: scale(0.96); }
+.btn-gold { background: linear-gradient(135deg,var(--gold),var(--gold-dark)); color: rgb(255, 255, 255); box-shadow: rgba(240, 169, 59, 0.4) 0px 8px 22px; }
+.btn-gold:hover { transform: translateY(-2px); box-shadow: rgba(240, 169, 59, 0.5) 0px 12px 28px; }
+.btn-ghost { background: rgba(255, 255, 255, 0.12); color: rgb(255, 255, 255); border: 1px solid rgba(255, 255, 255, 0.4); backdrop-filter: blur(8px); }
+.btn-ghost:hover { background: rgba(255, 255, 255, 0.22); }
+.hero-right { flex: 0 0 auto; min-width: 260px; background: rgba(20, 26, 30, 0.55); border: 1px solid rgba(255, 255, 255, 0.18); border-radius: var(--radius); padding: 22px 24px; backdrop-filter: blur(14px); box-shadow: rgba(0, 0, 0, 0.35) 0px 16px 40px; }
+.hero-right h4 { font-size: 13px; color: rgba(255, 255, 255, 0.6); font-weight: 600; letter-spacing: 2px; margin-bottom: 14px; }
+.hero-right .row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 14px; }
+.hero-right .row:last-child { margin-bottom: 0px; }
+.hero-right .row .ic { width: 30px; height: 30px; border-radius: 8px; background: rgba(240, 169, 59, 0.22); display: grid; place-items: center; font-size: 15px; flex: 0 0 auto; }
+.hero-right .row b { font-weight: 700; }
+.hero-right .row .mono { font-family: Consolas, monospace; color: rgb(255, 217, 138); }
+.scroll-hint { position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); z-index: 2; color: rgba(255, 255, 255, 0.75); font-size: 12px; letter-spacing: 3px; text-align: center; animation: 2s ease 0s infinite normal none running bob; }
+@keyframes bob { 
+  0%, 100% { transform: translate(-50%, 0px); }
+  50% { transform: translate(-50%, 8px); }
+}
+@media (max-width: 860px) {
+  .hero-inner { flex-direction: column; align-items: flex-start; gap: 28px; padding-bottom: 70px; }
+}
+main { background: var(--bg); position: relative; z-index: 3; }
+.wrap { width: min(1180px, 90vw); margin: 0px auto; padding: 72px 0px; }
+.h1 { font-size: clamp(26px, 3.2vw, 38px); font-weight: 900; display: flex; align-items: center; gap: 16px; margin-bottom: 10px; }
+.h1::before { content: ""; width: 8px; height: 36px; border-radius: 4px; background: linear-gradient(180deg,var(--gold),var(--gold-dark)); flex: 0 0 auto; }
+.h2 { font-size: clamp(18px, 2vw, 23px); font-weight: 800; margin: 44px 0px 18px; display: flex; align-items: center; gap: 10px; color: var(--ink); }
+.h2::before { content: "▸"; color: var(--gold); font-size: 18px; }
+.h-desc { color: var(--ink-soft); font-size: 15px; margin-bottom: 28px; max-width: 720px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.7s, transform 0.7s; }
+.reveal.visible { opacity: 1; transform: none; }
+.status-card { padding: 28px; overflow: hidden; }
+.status-head { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.srv-icon { width: 84px; height: 84px; border-radius: 14px; flex: 0 0 auto; background: linear-gradient(135deg, rgb(122, 179, 90), rgb(74, 143, 79)); border: 3px solid rgb(255, 255, 255); box-shadow: rgba(74, 143, 79, 0.35) 0px 6px 18px; image-rendering: pixelated; }
+.srv-main { flex: 1 1 0%; min-width: 220px; }
+.srv-ip { display: inline-flex; align-items: center; gap: 10px; font-family: Consolas, monospace; font-size: 20px; font-weight: 700; cursor: pointer; }
+.srv-ip .copy { font-size: 12px; font-family: inherit; font-weight: 600; background: var(--gold); color: rgb(255, 255, 255); padding: 3px 10px; border-radius: 999px; transition: background 0.2s; }
+.srv-ip:hover .copy { background: var(--gold-dark); }
+.srv-motd { color: var(--ink-soft); font-size: 14px; margin-top: 6px; min-height: 22px; }
+.srv-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.tag { font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px; background: rgb(241, 244, 248); color: var(--ink-soft); }
+.tag.online { background: rgba(74, 143, 79, 0.12); color: var(--green); }
+.tag.offline { background: rgba(220, 70, 70, 0.12); color: rgb(220, 70, 70); }
+.tag .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: currentcolor; margin-right: 5px; vertical-align: 1px; }
+.tag.online .dot { animation: 1.6s ease 0s infinite normal none running pulse; }
+.srv-players { flex: 0 0 auto; min-width: 200px; text-align: right; }
+.srv-players .num { font-size: 38px; font-weight: 900; line-height: 1.1; color: var(--green); }
+.srv-players .num.off { color: rgb(220, 70, 70); }
+.srv-players .num small { font-size: 17px; color: var(--ink-soft); font-weight: 700; }
+.srv-players .lbl { font-size: 13px; color: var(--ink-soft); }
+.pbar { height: 8px; border-radius: 99px; background: rgb(238, 241, 245); margin-top: 10px; overflow: hidden; }
+.pbar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg,#7ab35a,var(--green)); transition: width 0.8s; }
+.srv-meta { display: flex; gap: 26px; flex-wrap: wrap; margin-top: 22px; padding-top: 18px; border-top: 1px dashed var(--line); font-size: 13.5px; color: var(--ink-soft); }
+.srv-meta b { color: var(--ink); font-weight: 700; }
+.srv-meta .refresh { margin-left: auto; font-size: 12.5px; color: rgb(154, 163, 175); }
+.player-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.player-chip { display: flex; align-items: center; gap: 8px; background: rgb(245, 247, 250); border: 1px solid var(--line); padding: 5px 12px 5px 5px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+.player-chip img { width: 26px; height: 26px; border-radius: 6px; image-rendering: pixelated; }
+.no-players { font-size: 13.5px; color: rgb(154, 163, 175); padding: 14px 0px 2px; }
+.feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin: 22px 0px 8px; }
+.feat { padding: 22px; border-radius: var(--radius); background: var(--card); border: 1px solid var(--line); transition: transform 0.25s, box-shadow 0.25s; }
+.feat:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.feat .ic { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 22px; margin-bottom: 12px; background: rgba(240, 169, 59, 0.14); }
+.feat h5 { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+.feat p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.7; }
+.prose { font-size: 15px; color: rgb(61, 69, 80); }
+.prose p { margin-bottom: 14px; }
+.prose .note { background: rgb(255, 248, 236); border-left: 4px solid var(--gold); border-radius: 0px 12px 12px 0px; padding: 16px 20px; margin: 18px 0px; font-size: 14px; color: rgb(122, 90, 32); }
+.prose .warn { background: rgb(253, 238, 238); border-left: 4px solid rgb(224, 96, 96); border-radius: 0px 12px 12px 0px; padding: 16px 20px; margin: 18px 0px; font-size: 14px; color: rgb(138, 48, 48); }
+.spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-top: 20px; }
+.spec { background: linear-gradient(160deg, rgb(255, 255, 255), rgb(250, 246, 238)); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; text-align: center; }
+.spec .ic { font-size: 26px; }
+.spec .v { font-size: 24px; font-weight: 900; color: var(--gold-dark); margin: 6px 0px 2px; }
+.spec .k { font-size: 13px; color: var(--ink-soft); }
+.spec.upgrade { position: relative; overflow: hidden; }
+.spec.upgrade::after { content: "升级中"; position: absolute; top: 12px; right: -30px; background: var(--green); color: rgb(255, 255, 255); font-size: 11px; font-weight: 700; padding: 3px 36px; transform: rotate(45deg); }
+.qq-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-top: 26px; }
+.qq-card { display: flex; align-items: center; gap: 18px; padding: 26px; border-radius: var(--radius); background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow); transition: transform 0.25s; }
+.qq-card:hover { transform: translateY(-4px); }
+.qq-card .ic { width: 58px; height: 58px; border-radius: 16px; flex: 0 0 auto; display: grid; place-items: center; font-size: 28px; color: rgb(255, 255, 255); background: linear-gradient(135deg, rgb(74, 144, 217), rgb(47, 111, 176)); }
+.qq-card .ic.master { background: linear-gradient(135deg,var(--gold),var(--gold-dark)); }
+.qq-card h5 { font-size: 17px; font-weight: 800; }
+.qq-card p { font-size: 13px; color: var(--ink-soft); margin: 2px 0px 8px; }
+.qq-num { display: inline-flex; align-items: center; gap: 8px; font-family: Consolas, monospace; font-size: 17px; font-weight: 700; color: var(--ink); cursor: pointer; }
+.qq-num .copy { font-size: 11px; font-family: inherit; background: rgb(238, 241, 245); color: var(--ink-soft); padding: 2px 9px; border-radius: 99px; font-weight: 600; }
+.qq-num:hover .copy { background: var(--gold); color: rgb(255, 255, 255); }
+.cmd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; margin-top: 20px; }
+.cmd-row { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 11px 16px; font-size: 14px; }
+.cmd-row code { font-family: Consolas, monospace; font-weight: 700; font-size: 13.5px; color: var(--gold-dark); background: rgba(240, 169, 59, 0.12); padding: 3px 10px; border-radius: 7px; white-space: nowrap; flex: 0 0 auto; }
+.cmd-row span { color: var(--ink-soft); font-size: 13.5px; }
+.vip-price { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-top: 20px; }
+.price-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); padding: 24px; position: relative; transition: transform 0.25s, box-shadow 0.25s; }
+.price-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.price-card.hot { border: 2px solid var(--gold); background: linear-gradient(165deg, rgb(255, 253, 247), rgb(255, 255, 255)); }
+.price-card .tier { font-size: 17px; font-weight: 900; letter-spacing: 1px; }
+.price-card.lite .tier { color: rgb(91, 140, 90); }
+.price-card.vip .tier { color: rgb(63, 143, 217); }
+.price-card.svip .tier { color: rgb(138, 95, 208); }
+.price-card.msvip .tier { color: var(--gold-dark); }
+.price-card .price { font-size: 30px; font-weight: 900; margin: 8px 0px 2px; }
+.price-card .price small { font-size: 14px; color: var(--ink-soft); font-weight: 600; }
+.price-card .extra { font-size: 13px; color: var(--ink-soft); }
+.price-card .flag { position: absolute; top: -11px; right: 16px; background: var(--gold); color: rgb(255, 255, 255); font-size: 12px; font-weight: 700; padding: 3px 12px; border-radius: 99px; }
+.perk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 20px; }
+.perk-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); padding: 22px; display: flex; flex-direction: column; }
+.perk-card .head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.perk-card .head .medal { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; font-size: 19px; flex: 0 0 auto; color: rgb(255, 255, 255); }
+.perk-card.free .medal { background: rgb(154, 163, 175); }
+.perk-card.lite .medal { background: linear-gradient(135deg, rgb(122, 179, 90), rgb(74, 143, 79)); }
+.perk-card.vip .medal { background: linear-gradient(135deg, rgb(90, 168, 232), rgb(47, 111, 176)); }
+.perk-card.svip .medal { background: linear-gradient(135deg, rgb(169, 127, 224), rgb(112, 72, 184)); }
+.perk-card.msvip .medal { background: linear-gradient(135deg,#ffcf6b,var(--gold-dark)); }
+.perk-card .head b { font-size: 16px; font-weight: 900; }
+.perk-card .head .sub { font-size: 12px; color: var(--ink-soft); }
+.perk-card ul { list-style: none; font-size: 13.5px; color: var(--ink-soft); }
+.perk-card li { padding: 6px 0px 6px 24px; position: relative; border-bottom: 1px dashed rgb(240, 242, 246); }
+.perk-card li:last-child { border-bottom: none; }
+.perk-card li::before { content: "✓"; position: absolute; left: 2px; color: var(--green); font-weight: 800; }
+.perk-card.free li::before { content: "—"; color: rgb(194, 200, 210); }
+.perk-card.msvip { box-shadow: rgba(240, 169, 59, 0.22) 0px 14px 34px; }
+footer { background: rgb(29, 33, 40); color: rgba(255, 255, 255, 0.65); padding: 44px 5vw 34px; text-align: center; font-size: 13.5px; }
+footer .f-brand { font-size: 18px; font-weight: 900; color: rgb(255, 255, 255); margin-bottom: 8px; }
+footer .f-brand .hl { color: var(--gold); }
+footer .f-ip { font-family: Consolas, monospace; color: rgb(255, 217, 138); cursor: pointer; }
+footer p { margin: 4px 0px; }
+.toast { position: fixed; bottom: 30px; left: 50%; transform: translate(-50%, 20px); background: rgba(30, 34, 40, 0.92); color: rgb(255, 255, 255); font-size: 14px; font-weight: 600; padding: 11px 26px; border-radius: 999px; z-index: 200; opacity: 0; pointer-events: none; transition: 0.3s; }
+.toast.show { opacity: 1; transform: translate(-50%, 0px); }
+:root { --trae-layer-image-download: 89990; --trae-layer-browser-inspect-overlay: 90000; --trae-layer-browser-inspect-highlight: 90010; --trae-layer-browser-inspect-action: 90020; --trae-layer-text-selection-action: 90030; --trae-layer-edit-tooltip: 100095; }
+:root, [data-trae-theme="dark"] { --trae-bg-base-default: #171717; --trae-bg-menu: #222427; --trae-bg-overlay-l1: rgba(255, 255, 255, 0.04); --trae-bg-overlay-l2: rgba(255, 255, 255, 0.08); --trae-bg-overlay-l3: rgba(255, 255, 255, 0.12); --trae-bg-overlay-l4: rgba(255, 255, 255, 0.16); --trae-bg-invert: #f5f9fe; --trae-bg-invert-hover: #e8ecf0; --trae-bg-invert-active: #dce0e4; --trae-bg-invert-disabled: rgba(224, 226, 242, 0.12); --bg-bg-brand-disabled: rgba(75, 63, 227, 0.35); --bg-bg-brand-popup: rgba(106, 111, 255, 0.15); --trae-border-l1: #e0e2f217; --trae-border-l2: rgba(255, 255, 255, 0.12); --trae-border-l3: rgba(255, 255, 255, 0.08); --trae-border-neutral-l3: rgba(229, 229, 229, 0.20); --trae-border-brand: #6a6fff; --trae-text-default: #f5f9fe; --trae-text-default-hover: #f5f9fe; --trae-text-default-active: #f5f9fe; --trae-text-secondary: rgba(245, 249, 254, 0.5); --trae-text-tertiary: rgba(245, 249, 254, 0.4); --trae-text-disabled: #666b75; --trae-text-onaccent: #222427; --trae-icon-default: #f5f9fe; --trae-icon-secondary: rgba(245, 249, 254, 0.5); --trae-icon-brand: #6a6fff; --icon-icon-brand: var(--trae-icon-brand); --trae-icon-onaccent: #222427; --trae-status-success: #22c55e; --trae-status-primary: #3b82f6; --trae-status-primary-default: #387bff; --trae-status-primary-surface-l1: rgba(53, 121, 255, 0.18); --trae-status-success-default: #33c192; --trae-status-success-surface-l1: rgba(0, 165, 110, 0.18); --trae-status-error-default: #f65a5a; --trae-status-error-surface-l1: rgba(246, 70, 70, 0.18); --trae-annotation-marker-bg: #4b3fe3; --trae-annotation-marker-text: #ffffff; --trae-annotation-region-border: var(--trae-status-primary-default); --trae-region-outside-mask-bg: rgba(0, 0, 0, 0.32); --trae-panel-shadow: 0px 6px 24px -1px rgba(0, 0, 0, 0.16); --trae-floating-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.2); --trae-shadow-elevation-50: 0 1px 2px -1px rgba(0, 0, 0, 0.45); --text-text-default: var(--trae-text-default); --text-text-onaccent: var(--trae-text-onaccent); --bg-bg-menu: var(--trae-bg-menu); --bg-bg-white: var(--trae-bg-menu); --bg-bg-invert: var(--trae-bg-invert); --bg-bg-invert-disabled: var(--trae-bg-invert-disabled); --bg-bg-overlay-l1: var(--trae-bg-overlay-l1); --bg-bg-overlay-l2: var(--trae-bg-overlay-l2); --bg-bg-overlay-l3: var(--trae-bg-overlay-l3); --border-border-neutral-l1: var(--trae-border-l1); --border-border-brand: var(--trae-border-brand); --border-border-brand-half: rgba(106, 111, 255, 0.4); --status-error-default: var(--trae-status-error-default); --status-error-surface-l1: var(--trae-status-error-surface-l1); --radius-radius-md-12: 12px; --spacers-spacer-0: 0; --spacers-spacer-6: 6px; }
+[data-trae-theme="light"] { --trae-bg-base-default: #fafafa; --trae-bg-menu: #ffffff; --trae-bg-overlay-l1: rgba(0, 0, 0, 0.04); --trae-bg-overlay-l2: rgba(0, 0, 0, 0.06); --trae-bg-overlay-l3: rgba(0, 0, 0, 0.08); --trae-bg-overlay-l4: rgba(0, 0, 0, 0.12); --trae-bg-invert: #1f2328; --trae-bg-invert-hover: #32383f; --trae-bg-invert-active: #444d56; --trae-bg-invert-disabled: rgba(115, 115, 115, 0.20); --bg-bg-brand-disabled: rgba(75, 63, 227, 0.22); --bg-bg-brand-popup: rgba(170, 183, 255, 0.36); --trae-border-l1: rgba(0, 0, 0, 0.1); --trae-border-l2: rgba(0, 0, 0, 0.12); --trae-border-l3: rgba(0, 0, 0, 0.08); --trae-border-neutral-l3: rgba(115, 115, 115, 0.36); --trae-border-brand: #4b3fe3; --trae-text-default: #1f2328; --trae-text-default-hover: #111214; --trae-text-default-active: #111214; --trae-text-secondary: rgba(31, 35, 40, 0.5); --trae-text-tertiary: rgba(31, 35, 40, 0.4); --trae-text-disabled: #a1a1a1; --trae-text-onaccent: #ffffff; --trae-icon-default: #1f2328; --trae-icon-secondary: rgba(31, 35, 40, 0.5); --trae-icon-brand: #4b3fe3; --icon-icon-brand: var(--trae-icon-brand); --trae-icon-onaccent: #ffffff; --trae-status-success: #22c55e; --trae-status-primary: #3b82f6; --trae-status-primary-default: #2f74ff; --trae-status-primary-surface-l1: rgba(47, 116, 255, 0.12); --trae-status-success-default: #15a877; --trae-status-success-surface-l1: rgba(64, 176, 139, 0.12); --trae-status-error-default: #e8463a; --trae-status-error-surface-l1: rgba(232, 70, 58, 0.12); --trae-annotation-marker-bg: #4b3fe3; --trae-annotation-marker-text: #ffffff; --trae-annotation-region-border: var(--trae-status-primary-default); --trae-region-outside-mask-bg: rgba(0, 0, 0, 0.18); --trae-panel-shadow: 0px 6px 24px -1px rgba(24, 24, 24, 0.06); --trae-floating-shadow: 0px 2px 8px 0px rgba(24, 24, 24, 0.2); --trae-shadow-elevation-50: 0 1px 2px -1px rgba(24, 24, 24, 0.08); --text-text-default: var(--trae-text-default); --text-text-onaccent: var(--trae-text-onaccent); --bg-bg-menu: var(--trae-bg-menu); --bg-bg-white: var(--trae-bg-menu); --bg-bg-invert: var(--trae-bg-invert); --bg-bg-invert-disabled: var(--trae-bg-invert-disabled); --bg-bg-overlay-l1: var(--trae-bg-overlay-l1); --bg-bg-overlay-l2: var(--trae-bg-overlay-l2); --bg-bg-overlay-l3: var(--trae-bg-overlay-l3); --border-border-neutral-l1: var(--trae-border-l1); --border-border-brand: var(--trae-border-brand); --border-border-brand-half: rgba(75, 63, 227, 0.4); --status-error-default: var(--trae-status-error-default); --status-error-surface-l1: var(--trae-status-error-surface-l1); --radius-radius-md-12: 12px; --spacers-spacer-0: 0; --spacers-spacer-6: 6px; }
+@keyframes trae-spin { 
+  100% { transform: rotate(360deg); }
+}
+@keyframes trae-edit-bar-enter { 
+  0% { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0px) scale(1); }
+}
+@keyframes trae-edit-bar-leave { 
+  0% { opacity: 1; transform: translateY(0px) scale(1); }
+  100% { opacity: 0; transform: translateY(-4px) scale(0.98); }
+}
+@keyframes trae-edit-panel-leave { 
+  0% { opacity: 1; transform: translateY(0px) scale(1); }
+  100% { opacity: 0; transform: translateY(-4px) scale(0.98); }
+}
+.trae-edit-mode-active:not(.trae-edit-mode-dragging) body :not([data-trae-edit-ui]):not([data-trae-edit-ui] *) { transition: none !important; animation-play-state: paused !important; }
+.trae-edit-mode-reorder-hit-test [data-trae-edit-ui]:not(.trae-edit-pointer-shield):not(.trae-edit-panel), .trae-edit-mode-reorder-hit-test [data-trae-edit-ui]:not(.trae-edit-pointer-shield):not(.trae-edit-panel) * { pointer-events: none !important; }
+.trae-browser-inspect-overlay { position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; z-index: var(--trae-layer-browser-inspect-overlay); pointer-events: auto; background: transparent; }
+.trae-browser-inspect-highlight-box { position: absolute; top: 0px; left: 0px; z-index: var(--trae-layer-browser-inspect-highlight); display: none; }
+.trae-browser-inspect-highlight-tag { position: absolute; left: 0px; top: 0px; height: 18px; padding: 0px 6px; box-sizing: border-box; border-radius: 4px; background-color: var(--trae-status-success-default); color: var(--trae-text-onaccent); font-size: 12px; font-weight: 400; display: none; align-items: center; z-index: var(--trae-layer-browser-inspect-action); }
+.trae-browser-inspect-highlight-box-show { display: flex; }
+.trae-browser-inspect-highlight-tag.trae-browser-inspect-highlight-box-show { display: none; }
+.trae-browser-inspect-select-button.trae-browser-inspect-highlight-box-show { display: block !important; }
+.trae-browser-inspect-select-button { position: absolute; top: 0px; left: 0px; display: none; z-index: var(--trae-layer-browser-inspect-action); }
+.trae-browser-inspect-select-highlight-box { background: transparent !important; }
+.trae-browser-inspect-select-highlight-box .trae-browser-inspect-highlight-tag { background-color: var(--trae-status-success-default); }
+.trae-add-to-chat-card { display: block; overflow: hidden; background: var(--trae-bg-menu); border: 1px solid var(--trae-border-l1); border-radius: 8px; box-shadow: var(--trae-floating-shadow); transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), height 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+.trae-add-to-chat-content { position: relative; width: max-content; }
+.trae-fade-exit { opacity: 0; transition: opacity 0.15s ease-out; }
+.trae-fade-enter { opacity: 1; transition: opacity 0.2s ease-in; }
+.trae-buttons-view { display: flex; align-items: center; gap: 6px; padding: 4px; background: transparent; }
+.trae-action-button { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; background: transparent; border: none; border-radius: 4px; cursor: pointer; transform: none !important; transition: none !important; animation: auto ease 0s 1 normal none running none !important; }
+.trae-action-button:hover { background: var(--trae-bg-overlay-l2); }
+.trae-action-button:active { background: var(--trae-bg-overlay-l3); }
+.trae-action-button:focus-visible { outline: 2px solid var(--trae-status-primary); outline-offset: 1px; }
+.trae-action-button-icon { display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; color: var(--trae-icon-default); flex-shrink: 0; }
+.trae-action-button-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 500; line-height: 16px; color: var(--trae-text-default); white-space: nowrap; }
+.trae-edit-toolbar-button-active { background: var(--bg-bg-brand-disabled, rgba(75, 63, 227, 0.22)) !important; color: var(--icon-icon-brand, #4b3fe3) !important; font-weight: bold !important; }
+.trae-edit-toolbar-button-active:hover { background: var(--bg-bg-brand-popup, rgba(170, 183, 255, 0.36)) !important; }
+.trae-edit-toolbar button[data-action="alignment-dropdown"]:hover, .trae-edit-toolbar button[data-action="text-align-dropdown"]:hover, .trae-edit-toolbar button[data-action="font-decrease"]:hover, .trae-edit-toolbar button[data-action="font-increase"]:hover, .trae-edit-toolbar button[data-action^="align-"]:hover { border-radius: 8px; background: var(--bg-bg-overlay-l1, rgba(115, 115, 115, 0.08)) !important; }
+.trae-edit-toolbar button[data-action="alignment-dropdown"]:active, .trae-edit-toolbar button[data-action="text-align-dropdown"]:active, .trae-edit-toolbar button[data-action="font-decrease"]:active, .trae-edit-toolbar button[data-action="font-increase"]:active, .trae-edit-toolbar button[data-action^="align-"]:active { border-radius: 8px; background: var(--bg-bg-overlay-l2, rgba(115, 115, 115, 0.12)) !important; }
+.trae-comment-input { background: transparent; color: var(--trae-text-default); caret-color: var(--trae-text-default); }
+.trae-comment-input::placeholder { color: var(--trae-text-tertiary); }
+.trae-point-edit-bar, .trae-point-comment-input-bar, .trae-comment-only-panel { transform-origin: center top; will-change: opacity, transform; }
+.trae-edit-panel:not(.trae-edit-panel-leave) { pointer-events: auto !important; }
+.trae-edit-bar-enter { animation: trae-edit-bar-enter var(--transition-normal, 0.18s cubic-bezier(0.2, 0, 0, 1)) both; }
+.trae-edit-bar-leave { pointer-events: none; animation: trae-edit-bar-leave var(--transition-fast, 0.14s ease) both; }
+.trae-edit-panel-leave { pointer-events: none; animation: trae-edit-panel-leave var(--transition-fast, 0.14s ease) both; }
+.trae-edit-panel [data-trae-tooltip] { position: relative; }
+.trae-edit-panel [data-trae-tooltip]::after { content: attr(data-trae-tooltip); position: absolute; left: 50%; bottom: calc(100% + 8px); z-index: var(--trae-layer-edit-tooltip); padding: 6px 10px; border-radius: 6px; background: var(--trae-bg-invert, var(--bg-bg-invert)); color: var(--trae-text-onaccent, var(--text-text-onaccent)); box-shadow: var(--trae-floating-shadow); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", sans-serif; font-size: 11px; font-weight: 500; line-height: 16px; letter-spacing: 0.039px; white-space: nowrap; pointer-events: none; box-sizing: border-box; opacity: 0; transform: translateX(-50%); visibility: hidden; }
+.trae-edit-panel [data-trae-tooltip]::before { content: ""; position: absolute; left: 50%; bottom: calc(100% + 5px); z-index: var(--trae-layer-edit-tooltip); width: 8px; height: 4px; background: var(--trae-bg-invert, var(--bg-bg-invert)); clip-path: polygon(0px 0px, 100% 0px, 50% 100%); transform: translateX(-50%); pointer-events: none; opacity: 0; visibility: hidden; }
+.trae-edit-panel [data-trae-tooltip]:hover::after, .trae-edit-panel [data-trae-tooltip]:focus-visible::after, .trae-edit-panel [data-trae-tooltip]:hover::before, .trae-edit-panel [data-trae-tooltip]:focus-visible::before { opacity: 1; visibility: visible; }
+.trae-comment-btn { justify-content: center; cursor: pointer; transition: background-color 0.15s; }
+.trae-comment-btn:disabled { cursor: not-allowed; }
+.trae-comment-btn:focus-visible { outline: 2px solid var(--trae-status-primary); outline-offset: 1px; }
+.trae-comment-btn-primary { background: var(--trae-bg-invert); color: var(--trae-text-onaccent); }
+.trae-comment-btn-primary:hover:not(:disabled) { background: var(--trae-bg-invert-hover); }
+.trae-comment-btn-primary:active:not(:disabled) { background: var(--trae-bg-invert-active); }
+.trae-comment-btn-primary:disabled { background: var(--trae-bg-invert-disabled); color: var(--trae-text-disabled); }
+.trae-comment-btn-secondary { background: var(--trae-bg-overlay-l2); color: var(--trae-text-default); }
+.trae-comment-btn-secondary:hover:not(:disabled) { background: var(--trae-bg-overlay-l3); }
+.trae-comment-btn-secondary:active:not(:disabled) { background: var(--trae-bg-overlay-l4); }
+.trae-comment-btn-secondary:disabled { background: var(--trae-bg-overlay-l2); color: var(--trae-text-disabled); }
+.trae-comment-btn-text { background: transparent; color: var(--trae-text-default); }
+.trae-comment-btn-text:hover:not(:disabled) { border-radius: 8px; background: var(--bg-bg-overlay-l1, var(--trae-bg-overlay-l1)); color: var(--trae-text-default-hover); }
+.trae-comment-btn-text:active:not(:disabled) { border-radius: 8px; background: var(--trae-bg-overlay-l2); color: var(--trae-text-default-active); }
+.trae-comment-btn-text:disabled { background: transparent; color: var(--trae-text-disabled); }
+.trae-marking-btn { justify-content: center; }
+.trae-marking-btn:hover:not(:disabled) { background: var(--trae-bg-overlay-l1) !important; }
+.trae-marking-btn-active { background: var(--bg-bg-brand-disabled, rgba(75, 63, 227, 0.22)) !important; color: var(--icon-icon-brand, var(--trae-icon-brand)) !important; }
+.trae-marking-btn-active:hover { background: var(--bg-bg-brand-popup, rgba(170, 183, 255, 0.36)) !important; color: var(--icon-icon-brand, var(--trae-icon-brand)) !important; }
+.trae-marking-btn:active:not(:disabled) { background: var(--trae-bg-overlay-l2) !important; }
+.trae-marking-btn:disabled { color: var(--trae-text-disabled) !important; cursor: not-allowed !important; }
+.trae-action-button-shortcut { display: flex; align-items: center; gap: 2px; color: var(--trae-icon-secondary); flex-shrink: 0; }
+.trae-shortcut-container { display: flex; align-items: center; gap: 2px; }
+.trae-shortcut-key { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 500; line-height: 12px; color: var(--trae-icon-secondary); }
+.trae-add-to-chat-divider { width: 2px; height: 12px; padding: 0px 6px; box-sizing: content-box; background-clip: content-box; background-color: var(--trae-border-l2); flex-shrink: 0; }
+.trae-editor-view { display: flex; flex-direction: column; width: 320px; padding: 8px; background: transparent; }
+.trae-editor-text-container { display: flex; align-items: center; padding: 8px; background: var(--trae-bg-overlay-l1); border: 1px solid var(--trae-border-l3); border-radius: 4px; gap: 8px; }
+.trae-editor-textarea { flex: 1 1 0%; padding: 0px 2px; border: none; background: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 400; line-height: 20px; color: var(--trae-text-default); resize: none; outline: none; overflow-y: auto; max-height: 140px; }
+.trae-editor-textarea::placeholder { color: var(--trae-text-tertiary); }
+.trae-editor-action-bar { display: flex; align-items: center; justify-content: flex-end; gap: 4px; max-height: 0px; opacity: 0; overflow: hidden; transition: max-height 0.2s ease-out, opacity 0.2s ease-out, margin-top 0.2s ease-out; }
+.trae-editor-action-bar-visible { max-height: 32px; opacity: 1; margin-top: 8px; }
+.trae-editor-cancel-button { display: flex; align-items: center; justify-content: center; height: 24px; padding: 0px 4px; background: var(--trae-bg-overlay-l2); border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.15s; }
+.trae-editor-cancel-button:hover { background: var(--trae-bg-overlay-l3); }
+.trae-editor-cancel-button:active { background: var(--trae-bg-overlay-l3); }
+.trae-editor-cancel-button:focus-visible { outline: 2px solid var(--trae-status-primary); outline-offset: 1px; }
+.trae-editor-cancel-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 500; line-height: 16px; color: var(--trae-text-default); white-space: nowrap; padding: 0px 4px; }
+.trae-editor-submit-button { display: flex; align-items: center; justify-content: center; height: 24px; padding: 0px 8px; background: var(--trae-bg-invert); border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.15s; }
+.trae-editor-submit-button:hover { background: var(--trae-bg-invert-hover); }
+.trae-editor-submit-button:active { background: var(--trae-bg-invert-active); }
+.trae-editor-submit-button:focus-visible { outline: 2px solid var(--trae-status-primary); outline-offset: 1px; }
+.trae-editor-submit-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 500; line-height: 16px; color: var(--trae-text-onaccent); white-space: nowrap; padding: 0px 4px; }
+.trae-editor-submit-icon { display: flex; align-items: center; justify-content: center; width: 12px; height: 12px; color: var(--trae-icon-onaccent); flex-shrink: 0; }
+.trae-success-view { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0px 12px; height: 32px; white-space: nowrap; }
+.trae-success-icon { display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; color: var(--trae-status-success); flex-shrink: 0; }
+.trae-success-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12px; font-weight: 400; line-height: 18px; color: var(--trae-text-default); user-select: none; }</style></head>
+<body>
+
+<!-- ========== 顶部导航：介绍 / 官方群 / 帮助 ========== -->
+<nav class="nav" id="nav">
+  <div class="brand"><span class="logo">🌾</span><span>WheatValley 小麦谷</span></div>
+  <div class="tabs">
+    <a href="#intro" class="active">介绍</a>
+    <a href="#group">官方群</a>
+    <a href="#help">帮助</a>
+  </div>
+  <div class="nav-ip" data-copy="wheatvalleys.top">🔗 wheatvalleys.top</div>
+</nav>
+
+<!-- ========== 首屏背景板（模糊背景图） ========== -->
+<header class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+    <!-- 左侧：大标题字幕 -->
+    <div class="hero-left">
+      <div class="badge"><span class="dot"></span>服务器开荒中 · 现在加入就是老玩家</div>
+      <h1 class="hero-title">
+        <span class="hl">WheatValley 小麦谷</span>服务器开荒<br>—— 支持 1.8 - 26.2+ 全版本
+      </h1>
+      <p class="hero-sub">原汁原味的纯净生存 · 跨版本互通 · 生存 / 建筑 / 探索，从第一棵树开始你的传奇</p>
+      <div class="hero-actions">
+        <button class="btn btn-gold" data-copy="wheatvalleys.top">🎮 一键复制服务器 IP</button>
+        <a class="btn btn-ghost" href="#intro">▽ 了解服务器</a>
+      </div>
+    </div>
+    <!-- 右侧：小字幕信息 -->
+    <div class="hero-right">
+      <h4>QUICK INFO</h4>
+      <div class="row"><span class="ic">💡</span><span>推荐使用 <b>26.1.2</b> 版本游玩</span></div>
+      <div class="row"><span class="ic">🌐</span><span>IP：<b class="mono" data-copy="wheatvalleys.top" style="cursor:pointer">wheatvalleys.top</b></span></div>
+      <div class="row"><span class="ic">🔄</span><span>1.8 ~ 26.2+ 客户端均可进入</span></div>
+    </div>
+  </div>
+  <div class="scroll-hint">SCROLL ↓</div>
+</header>
+
+<!-- ========== 白色内容区 ========== -->
+<main>
+
+  <!-- ===== 介绍 ===== -->
+  <section id="intro">
+    <div class="wrap">
+      <h1 class="h1 reveal">介绍</h1>
+      <p class="h-desc reveal">新服开荒，一切从零开始。这里没有氪金碾压，没有花里胡哨的魔法插件，只有最纯粹的 Minecraft 生存乐趣。</p>
+
+      <!-- 服务器实时状态（mcsrvstat.us） -->
+      <div class="card status-card reveal">
+        <div class="status-head">
+          <img class="srv-icon" id="srvIcon" alt="服务器图标" src="data:image/png;base64,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">
+          <div class="srv-main">
+            <div class="srv-ip" data-copy="wheatvalleys.top">
+              wheatvalleys.top <span class="copy">复制</span>
+            </div>
+            <div class="srv-motd" id="srvMotd"><span style="color: #FFFF55;"><span style="font-weight: bold;">小麦谷服务器欢迎您 | </span></span><span style="color: #FF5555;"><span style="font-weight: bold;">版本[1.8-26.2]</span></span><br><span style="color: #55FF55;"><span style="font-weight: bold;">全新开荒测试 </span></span>| <span style="color: #FFAA00;"><span style="font-weight: bold;">建筑 </span></span>| <span style="color: #55FFFF;"><span style="font-weight: bold;">生存 </span></span>| <span style="color: #FF55FF;"><span style="font-weight: bold;">纯净生存无大量插件</span></span></div>
+            <div class="srv-tags">
+              <span class="tag online" id="srvState"><span class="dot"></span>服务器在线</span>
+              <span class="tag" id="srvVersion">版本：26.1.2</span>
+              <span class="tag" id="srvSoftware">核心：Paper</span>
+            </div>
+          </div>
+          <div class="srv-players">
+            <div class="num" id="srvOnline">1<small>/25</small></div>
+            <div class="lbl">在线玩家 / 最大人数</div>
+            <div class="pbar"><i id="srvBar" style="width: 4%;"></i></div>
+          </div>
+        </div>
+        <div class="srv-meta">
+          <span>端口：<b>25565</b></span>
+          <span>连接地址：<b>wheatvalleys.top</b></span>
+          <span>支持版本：<b>1.8 - 26.2+</b></span>
+          <span class="refresh" id="srvRefresh">上次刷新：17:39:07 · 每 30 秒自动刷新</span>
+        </div>
+        <div class="player-list" id="playerList"><span class="player-chip"><img loading="lazy" src="https://mc-heads.net/avatar/9d463dd2-f82e-32d5-ad4b-5df71668fb36/64" alt="lewod_">lewod_</span></div>
+      </div>
+
+      <!-- 亮点特性 -->
+      <div class="feat-grid">
+        <div class="feat reveal"><div class="ic">🌱</div><h5>纯净生存</h5><p>无影响平衡的商店与插件，红石、生电、建筑全凭本事，体验最原汁原味的 MC。</p></div>
+        <div class="feat reveal"><div class="ic">🧭</div><h5>便捷指令</h5><p>提供 /tpa、/home、/back 传送与经济、签到系统，生存方便但不失挑战。</p></div>
+        <div class="feat reveal"><div class="ic">🗺️</div><h5>三大分区</h5><p>一区纯净生存、二区无规则、三区娱乐建筑测试，每种玩法都有属于你的天地。</p></div>
+        <div class="feat reveal"><div class="ic">🔍</div><h5>COI 查询</h5><p>内置 CoI 记录查询，优先向为服务器做出贡献的玩家开放，共建透明社区。</p></div>
+      </div>
+
+      <!-- ## 纯净生存服介绍 -->
+      <h2 class="h2 reveal">这是一个 Minecraft 纯净生存服</h2>
+      <div class="prose reveal">
+        <p>你可以在这里生存、建筑、探索、升级装备。开荒初期大家都一无所有，一起撸下第一棵树、建起第一个庇护所、开垦第一片麦田、组队挑战末影龙——小麦谷的每一块土地，都等待着被玩家亲手赋予故事。</p>
+        <p>服务器内<b>没有影响平衡的商店和插件</b>，我们提供 <b>/tpa、/home、/back</b>，以及经济系统和签到系统。我们<b>不打算安装领地插件</b>（装了也不会用在生存服），所以请大家保护好自己的基地，藏好物资、交好邻居（未来也许会搞一个投票来决定是否增设保护措施）。</p>
+        <div class="note">
+          <b>🗺️ 服务器内有 3 个区：</b><br>
+          · <b>一区 · 纯净生存区</b>：友好互助，拆家偷东西者直接 ban；<br>
+          · <b>二区 · 无规则生存</b>：弱肉强食，适者生存，进来了就别抱怨；<br>
+          · <b>三区 · 娱乐建筑测试服</b>：暂不支持进行任何操作，还在测试中。
+        </div>
+        <p>服务器内置 <b>CoI</b>（查询类辅助），优先给为服务器贡献的玩家开放，开放顺序为：<b>首先赞助 → 其次 VIP → 然后紫钻充值玩家 → 普通玩家</b>。</p>
+        <div class="warn">
+          <b>⚠️ 关于大型生电机器的重要规定：</b><br>
+          在服务器升级至 <b>16GB 内存、120GB 硬盘</b>之前，<b>禁止建造大型生电机器</b>（所以给力啊，大家多多支持升级）！例如超过 <b>20 核</b>的刷铁机、<b>100 个以上</b>熔炉组等。一经发现：机器销毁 + ban 7 天，屡教不改者永久 ban。
+        </div>
+        <p>服务器<b>暂不考虑安装反外挂 / 矿透检测</b>，但一旦被管理组发现作弊（管理员可以隐身巡查），<b>ban 5 天</b>。技术或许能瞒过插件，但瞒不过在线的眼睛。</p>
+        <div class="warn">
+          <b>📢 数据红线声明：</b>若服务器数据占用硬盘达到 <b>3/4</b>，我们会发起投票决定是否充值扩容；内存占用大于 <b>7/8</b> 将<b>无条件重置</b>。所以说——不要建大机器，人人有责。
+        </div>
+      </div>
+
+      <!-- ## 赞助说明 -->
+      <h2 class="h2 reveal">玩家赞助、充值的钱怎么处理</h2>
+      <div class="prose reveal">
+        <p>我们<b>不提倡</b>玩家在看见别人充值、获得称号、权限、fly 之后跟风充值，一切完全凭玩家个人意愿——当然，我们也不反对真心想支持服务器的朋友。</p>
+        <p>充值和赞助的钱<b>不考虑退回</b>；若单次充值、赞助金额大于 <b>300 元</b>，需要签写相关信息（实名登记，保障双方权益）。</p>
+        <p>服主在服务器收到的每一笔钱，都会<b>第一时间用于配置升级和服务器维护</b>——因为现在的配置实在太低了，不足以支撑大型服运转（服主也还是个学生啊 Z）。剩下的钱，我会留出<b>一半</b>作为服务器续费备用金。小麦谷能走多远，靠的是大家。</p>
+      </div>
+
+      <!-- ## 配置 -->
+      <h2 class="h2 reveal">服务器配置</h2>
+      <p class="h-desc reveal">当前配置一览，升级计划正在路上——你的每一份支持都会变成更强的 CPU、更大的内存和硬盘。</p>
+      <div class="spec-grid">
+        <div class="spec reveal"><div class="ic">⚙️</div><div class="v">8 核</div><div class="k">CPU</div></div>
+        <div class="spec upgrade reveal"><div class="ic">🧠</div><div class="v">8G</div><div class="k">内存（目标 16G）</div></div>
+        <div class="spec upgrade reveal"><div class="ic">💾</div><div class="v">80G</div><div class="k">磁盘（目标 120G）</div></div>
+        <div class="spec reveal"><div class="ic">📶</div><div class="v">30M</div><div class="k">宽带</div></div>
+        <div class="spec reveal"><div class="ic">🌐</div><div class="v" style="font-size:17px;line-height:2.2">wheatvalleys.top</div><div class="k">连接地址（公网 IP 不会给你）</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 官方群 ===== -->
+  <section id="group">
+    <div class="wrap">
+      <h1 class="h1 reveal">官方群</h1>
+      <p class="h-desc reveal">加入 QQ 群获取开服通知、活动公告与技术支持；充值、赞助相关事宜请直接联系服主。</p>
+      <div class="qq-grid">
+        <div class="qq-card reveal">
+          <div class="ic master">👑</div>
+          <div>
+            <h5>服主 QQ</h5>
+            <p>接受赞助、充值处理与 VIP 开通</p>
+            <span class="qq-num" data-copy="2872278194">2872278194 <span class="copy">复制</span></span>
+          </div>
+        </div>
+        <div class="qq-card reveal">
+          <div class="ic">💬</div>
+          <div>
+            <h5>QQ 官方群</h5>
+            <p>玩家交流 · 开服通知 · 公告活动 · 问题反馈</p>
+            <span class="qq-num" data-copy="1064431755">1064431755 <span class="copy">复制</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 帮助 ===== -->
+  <section id="help">
+    <div class="wrap">
+      <h1 class="h1 reveal">帮助</h1>
+      <p class="h-desc reveal">新玩家必看：服务器指令、VIP 购买方式与各档位权益说明。</p>
+
+      <!-- ## 插件指令 -->
+      <h2 class="h2 reveal">服务器有什么插件功能</h2>
+      <div class="cmd-grid">
+        <div class="cmd-row reveal"><code>/sethome 名字</code><span>创建一个家</span></div>
+        <div class="cmd-row reveal"><code>/renamehome 名称</code><span>给家改名</span></div>
+        <div class="cmd-row reveal"><code>/delhome 名称</code><span>删除一个家</span></div>
+        <div class="cmd-row reveal"><code>/home 名称</code><span>传送回家</span></div>
+        <div class="cmd-row reveal"><code>/back</code><span>返回死亡点</span></div>
+        <div class="cmd-row reveal"><code>/spawn /hub /lobby</code><span>返回主城 lobby</span></div>
+        <div class="cmd-row reveal"><code>/mv qu1</code><span>去到一区（纯净生存）</span></div>
+        <div class="cmd-row reveal"><code>/mv qu2</code><span>去到二区（无规则）</span></div>
+        <div class="cmd-row reveal"><code>/mv qu3</code><span>去到三区（娱乐建筑区）</span></div>
+        <div class="cmd-row reveal"><code>/cd</code><span>打开全局主菜单</span></div>
+        <div class="cmd-row reveal"><code>/suicide</code><span>自杀（卡 bug 自救用）</span></div>
+        <div class="cmd-row reveal"><code>/qd</code><span>每日签到领奖励</span></div>
+        <div class="cmd-row reveal"><code>/balancetop</code><span>查看金币积分榜</span></div>
+      </div>
+
+      <!-- ## 怎么获得 VIP -->
+      <h2 class="h2 reveal">怎么获得 VIP？</h2>
+      <div class="prose reveal">
+        <p>你可以在 VIP 页面点击支付（<b>仅支持微信</b>），随后拿着支付订单截图联系服主。服主检查确认收款后，会在 <b>1 小时 ~ 2 天内</b>为你开通对应 VIP 权益。</p>
+      </div>
+      <div class="vip-price">
+        <div class="price-card lite reveal">
+          <div class="tier">LiteVIP</div>
+          <div class="price">¥5 <small>或 120 紫钻</small></div>
+          <div class="extra">入门体验档，称号 + CoI + 多 home</div>
+        </div>
+        <div class="price-card vip hot reveal">
+          <span class="flag">热门</span>
+          <div class="tier">VIP</div>
+          <div class="price">¥15 <small>或 250 紫钻</small></div>
+          <div class="extra">fly 体验 + 3 区自由建造 + 30 home</div>
+        </div>
+        <div class="price-card svip reveal">
+          <div class="tier">SVIP</div>
+          <div class="price">¥30 <small>仅充值</small></div>
+          <div class="extra">2 月 fly + 隐身 + 渐变称号格式</div>
+        </div>
+        <div class="price-card msvip reveal">
+          <div class="tier">MSVIP</div>
+          <div class="price">¥50 <small>或 30 紫钻 + ¥40</small></div>
+          <div class="extra">永久 fly + 永久创造 + 全格式称号</div>
+        </div>
+      </div>
+      <div class="prose reveal">
+        <div class="note">
+          <b>📣 宣传奖励（白嫖渠道）：</b><br>
+          · 发布服务器宣传视频，点赞 <b>&gt; 10</b>：可获得 <b>LiteVIP</b>；<br>
+          · 点赞 <b>&gt; 30</b>：可获得 <b>VIP</b>；<br>
+          · 点赞 <b>&gt; 50</b>：可获得 <b>SVIP</b>。<br>
+          <span style="color:#a08050">（价格不保证一定准确、后续不会增长，早买早享受）</span>
+        </div>
+      </div>
+
+      <!-- ## VIP 权益 -->
+      <h2 class="h2 reveal">VIP 能获得哪些权益</h2>
+      <div class="perk-grid">
+        <div class="perk-card free reveal">
+          <div class="head"><span class="medal">🪨</span><div><b>基础玩家</b><div class="sub">免费 · 人人平等</div></div></div>
+          <ul>
+            <li>无称号</li>
+            <li>无 fly 飞行</li>
+            <li>无隐身</li>
+            <li>无传送权限</li>
+            <li>无多 home</li>
+            <li>纯净生存完整体验</li>
+          </ul>
+        </div>
+        <div class="perk-card lite reveal">
+          <div class="head"><span class="medal">🌿</span><div><b>LiteVIP</b><div class="sub">¥5 / 120 紫钻</div></div></div>
+          <ul>
+            <li>提供称号 2 个</li>
+            <li>自定义称号 1 次</li>
+            <li>3 区无批审建造 1 次（申请后无需提交项目 / 范围 / 时间）</li>
+            <li>开放 CoI 查询</li>
+            <li>10 个 home</li>
+          </ul>
+        </div>
+        <div class="perk-card vip reveal">
+          <div class="head"><span class="medal">💎</span><div><b>VIP</b><div class="sub">¥15 / 250 紫钻</div></div></div>
+          <ul>
+            <li>fly 飞行 15 天 + 专属称号 1 个</li>
+            <li>自定义称号 1 次（可搭配颜色）</li>
+            <li>赠送 30 紫钻</li>
+            <li>3 区无批审建造 · 永久</li>
+            <li>下界 / 末地传送命令</li>
+            <li>开放 CoI 查询</li>
+            <li>30 个 home</li>
+            <li>允许创建 1 个 warp 地标</li>
+          </ul>
+        </div>
+        <div class="perk-card svip reveal">
+          <div class="head"><span class="medal">🔮</span><div><b>SVIP</b><div class="sub">¥30 · 仅充值</div></div></div>
+          <ul>
+            <li>fly 飞行 2 个月</li>
+            <li>豪华称号 1 个 + 自定义称号</li>
+            <li>赠 50 紫钻、5000 金币</li>
+            <li>称号支持颜色 / 粗细 / 渐变 / 斜体</li>
+            <li>隐身、tp 坐标、locate 指令</li>
+            <li>下界 / 末地传送、开放 CoI</li>
+            <li>50 个 home</li>
+            <li>3 区允许 10 次创造 + 无批审</li>
+            <li>允许创建 3 个 warp 地标</li>
+          </ul>
+        </div>
+        <div class="perk-card msvip reveal">
+          <div class="head"><span class="medal">👑</span><div><b>MSVIP</b><div class="sub">¥50 / 30 紫钻+¥40</div></div></div>
+          <ul>
+            <li>fly 该档重置前永久</li>
+            <li>顶级称号 1 个，自定义称号支持全部格式、永久可改</li>
+            <li>附赠 250 紫钻、10000 金币</li>
+            <li>开放 CoI、tp 坐标、隐身</li>
+            <li>下界 / 末地传送</li>
+            <li>200 个 home</li>
+            <li>服务器群专属称号</li>
+            <li>3 区永久创造 + 无批审</li>
+            <li>全服公益名单</li>
+            <li>允许创建 5 个 warp 地标</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ========== 页脚 ========== -->
+<footer>
+  <div class="f-brand">🌾 <span class="hl">WheatValley</span> 小麦谷服务器</div>
+  <p>服务器地址：<span class="f-ip" data-copy="wheatvalleys.top">wheatvalleys.top</span>（点击复制）· 支持 1.8 - 26.2+ 全版本</p>
+  <p>本页面与 Mojang AB 无关 · Minecraft 是 Mojang AB 的商标</p>
+</footer>
+
+<div class="toast" id="toast">已复制到剪贴板</div>
+
+<script>
+/* ========== 导航滚动毛玻璃 + 标签高亮 ========== */
+const nav = document.getElementById('nav');
+const tabLinks = document.querySelectorAll('.nav .tabs a');
+const sections = [...document.querySelectorAll('section')];
+
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+  // 依据滚动位置高亮当前标签
+  const y = window.scrollY + 120;
+  let current = sections[0]?.id;
+  for (const s of sections) if (s.offsetTop <= y) current = s.id;
+  tabLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+}, { passive: true });
+
+/* ========== 复制到剪贴板（事件委托，容错处理） ========== */
+const toast = document.getElementById('toast');
+let toastTimer;
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+}
+function copyText(text) {
+  const done = () => showToast('已复制：' + text);
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+  } else {
+    fallbackCopy(text, done);
+  }
+}
+// 兼容非 HTTPS 环境的降级复制
+function fallbackCopy(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); done(); }
+  catch (e) { showToast('复制失败，请手动复制：' + text); }
+  document.body.removeChild(ta);
+}
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-copy]');
+  if (el) copyText(el.dataset.copy);
+});
+
+/* ========== 滚动进入动画 ========== */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('visible'); io.unobserve(en.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ========== 服务器状态：mcsrvstat.us 公开接口，30 秒自动刷新 ========== */
+const SERVER_ADDR = 'wheatvalleys.top';
+// 默认图标（接口未返回 favicon 时使用的内联草方块 SVG）
+const DEFAULT_ICON = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">'
+  + '<rect width="64" height="64" rx="10" fill="#6b4a2f"/>'
+  + '<rect y="40" width="64" height="24" fill="#7a5636"/>'
+  + '<g fill="#5d9c4a"><rect x="4" y="8" width="10" height="10"/><rect x="20" y="6" width="10" height="10"/>'
+  + '<rect x="36" y="9" width="10" height="10"/><rect x="50" y="7" width="10" height="10"/>'
+  + '<rect x="12" y="20" width="10" height="10"/><rect x="28" y="18" width="10" height="10"/>'
+  + '<rect x="44" y="21" width="10" height="10"/><rect x="2" y="30" width="10" height="10"/>'
+  + '<rect x="36" y="30" width="10" height="10"/></g>'
+  + '<g fill="#7ab35a"><rect x="20" y="30" width="10" height="10"/><rect x="52" y="30" width="10" height="10"/></g></svg>');
+
+const el = {
+  icon: document.getElementById('srvIcon'),
+  motd: document.getElementById('srvMotd'),
+  state: document.getElementById('srvState'),
+  version: document.getElementById('srvVersion'),
+  software: document.getElementById('srvSoftware'),
+  online: document.getElementById('srvOnline'),
+  bar: document.getElementById('srvBar'),
+  list: document.getElementById('playerList'),
+  refresh: document.getElementById('srvRefresh')
+};
+el.icon.src = DEFAULT_ICON;
+
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+
+async function fetchStatus() {
+  try {
+    const res = await fetch(`https://api.mcsrvstat.us/3/${SERVER_ADDR}`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const d = await res.json();
+    renderStatus(d);
+  } catch (err) {
+    // 接口异常时显示离线/错误态，不影响页面其他部分
+    el.state.className = 'tag offline';
+    el.state.innerHTML = '<span class="dot"></span>状态获取失败，稍后重试';
+    el.motd.textContent = '无法连接状态接口，服务器可能仍在运行，请直接尝试进入游戏。';
+    el.online.innerHTML = '--<small>/--</small>';
+    el.list.innerHTML = '';
+  }
+  el.refresh.textContent = '上次刷新：' + new Date().toLocaleTimeString('zh-CN') + ' · 每 30 秒自动刷新';
+}
+
+function renderStatus(d) {
+  // 服务器图标
+  if (d.icon && d.icon.startsWith('data:image')) el.icon.src = d.icon;
+
+  if (d.online) {
+    // 在线状态
+    el.state.className = 'tag online';
+    el.state.innerHTML = '<span class="dot"></span>服务器在线';
+    el.version.textContent = '版本：' + (d.version || '未知');
+    el.software.textContent = '核心：' + (d.software || '未知');
+
+    // MOTD（接口提供 html 字段，已带颜色转义；clean 作为降级）
+    const motd = d.motd && (d.motd.html && d.motd.html.length ? d.motd.html.join('<br>') : (d.motd.clean || []).join('<br>'));
+    el.motd.innerHTML = motd || '欢迎来到 WheatValley 小麦谷！';
+
+    // 人数 + 进度条
+    const on = d.players?.online ?? 0;
+    const max = d.players?.max ?? 0;
+    el.online.classList.remove('off');
+    el.online.innerHTML = on + '<small>/' + max + '</small>';
+    el.bar.style.width = (max > 0 ? Math.min(100, on / max * 100) : 0) + '%';
+
+    // 在线玩家头像（优先用 UUID 拉取 mc-heads 头像；过滤接口缓存的无名残留）
+    const players = (d.players?.list || []).filter(p => p && p.name);
+    if (on > 0 && players.length) {
+      el.list.innerHTML = players.slice(0, 30).map(p => {
+        const key = p.uuid || p.name;
+        const name = esc(p.name);
+        return `<span class="player-chip"><img loading="lazy" src="https://mc-heads.net/avatar/${esc(key)}/64" alt="${name}">${name}</span>`;
+      }).join('');
+    } else {
+      el.list.innerHTML = '<div class="no-players">当前没有玩家在线，快来当第一个！</div>';
+    }
+  } else {
+    // 离线状态
+    el.state.className = 'tag offline';
+    el.state.innerHTML = '<span class="dot"></span>服务器离线';
+    el.version.textContent = '版本：--';
+    el.software.textContent = '核心：--';
+    el.motd.textContent = '服务器当前离线，可能正在维护或升级，请关注 QQ 群通知。';
+    el.online.classList.add('off');
+    el.online.innerHTML = 'OFF<small>LINE</small>';
+    el.bar.style.width = '0%';
+    el.list.innerHTML = '';
+  }
+}
+
+fetchStatus();
+setInterval(fetchStatus, 30000); // 30 秒自动刷新
+</script>
+
+
+<div data-trae-edit-ui="true" class="trae-image-download-btn" title="Download image" style="position: fixed; display: none; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; background: var(--trae-bg-menu, #222427); border: 1px solid var(--trae-border-l2, rgba(255,255,255,0.12)); box-shadow: var(--trae-floating-shadow, 0px 2px 8px 0px rgba(0,0,0,0.2)); color: var(--trae-icon-default, #f5f9fe); cursor: pointer; z-index: 89990; transition: background 0.15s; pointer-events: auto;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 2v8m0 0L5 7m3 3l3-3M3 12h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg></div></body></html>
